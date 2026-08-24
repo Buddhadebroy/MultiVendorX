@@ -288,9 +288,7 @@ class Store {
 
 		$table = $wpdb->prefix . Utill::TABLES['store_meta'];
 
-		if ( is_array( $value ) || is_object( $value ) ) {
-			$value = maybe_serialize( $value );
-		}
+		$value = maybe_serialize( $value );
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$exists = $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching

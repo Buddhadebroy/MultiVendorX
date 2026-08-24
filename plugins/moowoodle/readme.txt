@@ -3,9 +3,9 @@ Contributors: dualcube
 Tags: moodle, lms, sell course, moodle wordpress connect, LMS integration
 Donate link: https://dualcube.com/?utm_source=wporg&utm_medium=plugindescription&utm_campaign=moowoodlewporg
 Requires at least: 6.0.0
-Tested up to: 7.0.3
+Tested up to: 7.1.0
 Requires PHP: 8.0
-Stable tag: 3.4.7
+Stable tag: 3.4.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -230,6 +230,12 @@ This project might have bugs and may be lacking certain features. If you'd like 
 11. View the log file to detect any errors related to MooWoodle configuration.
 
 == Changelog ==
+
+= 3.4.8 - 2026-08-25 =
+* Added     - Compatibility with WordPress 7.1.0.
+* Added     - Compatibility of WooCommerce 11.0.1.
+* Fixed     - Security vulnerabilities and improved validation and access control across plugin functionality.
+* Updated   - Language file.
 
 = 3.4.7 - 2026-08-11 =
 * Added     - Compatibility with WordPress 7.0.3.

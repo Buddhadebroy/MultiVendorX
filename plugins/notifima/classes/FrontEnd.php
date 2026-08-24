@@ -191,7 +191,8 @@ class FrontEnd {
      * @return string
      */
     public function get_product_lead_time() {
-        global $product;
+        $product_id = get_queried_object_id();
+        $product    = wc_get_product( $product_id );
 
         if ( ! $product instanceof \WC_Product ) {
             return '';

@@ -475,11 +475,7 @@ class Utill {
             }
         }
 
-        return new \WP_Error(
-            'catalogx_rest_forbidden',
-            __( 'You are not allowed to perform this action.', 'catalogx' ),
-            array( 'status' => is_user_logged_in() ? 403 : 401 )
-        );
+        return false;
     }
 
 }

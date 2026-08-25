@@ -93,7 +93,7 @@ class Rest extends \WP_REST_Controller {
      * @return true|\WP_Error
      */
     public function permissions_check( $request ) {
-        return Utill::current_user_has_capability( array( 'customer', 'edit_stores' ) );
+        return Utill::current_user_has_capability( array( 'read', 'edit_stores' ) );
     }
 
     /**

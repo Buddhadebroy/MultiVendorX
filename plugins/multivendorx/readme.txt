@@ -246,7 +246,7 @@ Ans. Obviously, you can! Join in on our [GitHub repository](https://github.com/m
 
 == Changelog ==
 
-= 5.0.15 - 2026-08-25 =
+= 5.0.15 - 2026-08-26 =
 * Added     - Compatibility with WordPress 7.1.0
 * Added     - Compatibility with the WooCommerce Cost of Goods field on the Edit Product page #2302
 * Fixed     - Issue where the extra fee was not charged once the free withdrawal limit was exhausted #2311

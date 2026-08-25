@@ -187,7 +187,7 @@ export default {
 			docLink:
 				'https://multivendorx.com/docs/knowledgebase/variable-product/?utm_source=wpadmin&utm_medium=pluginsettings&utm_campaign=multivendorx',
 			proModule: true,
-			freeFeatures: [
+			proFeatures: [
 				__('Offer size, color, or format options on one listing', 'multivendorx'),
 				__('Each variation keeps its own price and stock', 'multivendorx'),
 				__('Customers choose options before checkout', 'multivendorx'),
@@ -201,7 +201,7 @@ export default {
 			docLink:
 				'https://multivendorx.com/docs/knowledgebase/external-product/?utm_source=wpadmin&utm_medium=pluginsettings&utm_campaign=multivendorx',
 			proModule: true,
-			freeFeatures: [
+			proFeatures: [
 				__('Sends buyers to another site to complete checkout', 'multivendorx'),
 				__('Useful for affiliate or drop-ship style listings', 'multivendorx'),
 				__('No inventory tracked on your marketplace', 'multivendorx'),
@@ -215,7 +215,7 @@ export default {
 			docLink:
 				'https://multivendorx.com/docs/knowledgebase/grouped-product/?utm_source=wpadmin&utm_medium=pluginsettings&utm_campaign=multivendorx',
 			proModule: true,
-			freeFeatures: [
+			proFeatures: [
 				__('Bundles related simple products under one listing', 'multivendorx'),
 				__('Customers buy items individually or as a set', 'multivendorx'),
 				__('Good fit for curated product collections', 'multivendorx'),
@@ -617,7 +617,7 @@ export default {
 			docLink:
 				'https://multivendorx.com/docs/knowledgebase/store-analytics/?utm_source=wpadmin&utm_medium=pluginsettings&utm_campaign=multivendorx',
 			proModule: true,
-			freeFeatures: [
+			proFeatures: [
 				__('Google Analytics integration at the store level', 'multivendorx'),
 				__('Sales, order, and revenue reports per store', 'multivendorx'),
 				__('SEO-friendly rich results in search listings', 'multivendorx'),
@@ -711,7 +711,7 @@ export default {
 			docLink: 'https://multivendorx.com/docs/knowledgebase/marketplace-fee/?utm_source=wpadmin&utm_medium=pluginsettings&utm_campaign=multivendorx',
 			settingsLink: `${appLocalizer.admin_dashboard_url}#&tab=settings&subtab=commissions`,
 			proModule: true,
-			freeFeatures: [
+			proFeatures: [
 				__('Fixed, percentage, or combined platform fee models', 'multivendorx'),
 				__('Charge at checkout or deduct from vendor earnings', 'multivendorx'),
 				__('Applied automatically to every order or store', 'multivendorx'),
@@ -883,7 +883,7 @@ export default {
 					link: 'https://wordpress.org/plugins/buddypress/',
 				},
 			],
-			proFeatures: [
+			freeFeatures: [
 				__('Store and customer profile pages', 'multivendorx'),
 				__('Connections and messaging between marketplace users', 'multivendorx'),
 				__('Adds a social layer on top of stores', 'multivendorx'),
@@ -908,7 +908,7 @@ export default {
 					link: 'https://wordpress.org/plugins/woocommerce-multilingual/',
 				},
 			],
-			proFeatures: [
+			freeFeatures: [
 				__('Products pages in multiple languages', 'multivendorx'),
 				__('Language switcher', 'multivendorx'),
 				__('Works with WooCommerce Multilingual', 'multivendorx'),

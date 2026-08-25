@@ -101,7 +101,7 @@ class Stores extends \WP_REST_Controller {
      * @return true|\WP_Error
      */
     public function create_item_permissions_check( $request ) {
-        return Utill::current_user_has_capability( array( 'manage_options','customer' ) );
+        return Utill::current_user_has_capability( array( 'create_stores' ) );
     }
 
     /**

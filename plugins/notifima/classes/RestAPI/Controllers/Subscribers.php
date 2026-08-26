@@ -145,7 +145,7 @@ class Subscribers extends \WP_REST_Controller {
 
         try {
             $args = array(
-                'query' => array(
+                'query'       => array(
                     'post_type'      => array( 'product', 'product_variation' ),
                     'post_status'    => 'publish',
                     'posts_per_page' => -1,
@@ -232,7 +232,6 @@ class Subscribers extends \WP_REST_Controller {
             $response->header( 'X-Total', $total_subscribers );
 
             return $response;
-
         } catch ( \Exception $e ) {
             return new \WP_Error(
                 'server_error',

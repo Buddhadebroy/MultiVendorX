@@ -19,10 +19,10 @@ defined( 'ABSPATH' ) || exit;
 class Utill {
 
     public const NOTIFIMA_SETTINGS = array(
-        'automation'                    => 'notifima_automation_settings',
-        'subscription-form-designer'    => 'notifima_subscription_form_designer_settings',
-        'customer-messages'             => 'notifima_customer_messages_settings',
-        'notifications'                 => 'notifima_notifications_settings',
+        'automation'                 => 'notifima_automation_settings',
+        'subscription-form-designer' => 'notifima_subscription_form_designer_settings',
+        'customer-messages'          => 'notifima_customer_messages_settings',
+        'notifications'              => 'notifima_notifications_settings',
     );
 
     public const NOTIFIMA_PRODUCT_META = array(

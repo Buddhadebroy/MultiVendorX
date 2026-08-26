@@ -379,5 +379,4 @@ class Util {
 
         return false;
     }
-
 }

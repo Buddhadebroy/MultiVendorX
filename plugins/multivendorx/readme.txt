@@ -3,9 +3,9 @@ Contributors: wcmp, purnendu
 Tags: marketplace, WooCommerce marketplace, multi vendor, multivendor, multivendor marketplace
 Donate link: http://multivendorx.com/donate/?utm_source=wporg&utm_medium=plugindescription&utm_campaign=multivendorxwporg
 Requires at least: 6.4.0
-Tested up to: 7.0.3
+Tested up to: 7.1.0
 Requires PHP: 8.0
-Stable tag: 5.0.14
+Stable tag: 5.0.15
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -245,6 +245,14 @@ Ans. Obviously, you can! Join in on our [GitHub repository](https://github.com/m
 15. Store-admin-list.
 
 == Changelog ==
+
+= 5.0.15 - 2026-08-26 =
+* Added     - Compatibility with WordPress 7.1.0
+* Added     - Compatibility with the WooCommerce Cost of Goods field on the Edit Product page #2302
+* Fixed     - Issue where the extra fee was not charged once the free withdrawal limit was exhausted #2311
+* Fixed     - Issue with coupon application for product types other than Simple Products #2308
+* Fixed     - Security vulnerabilities reported by members of the WordPress community
+* Updated   - Language file.
 
 = 5.0.14 - 2026-08-12 =
 * Added     - Compatibility with WooCommerce 11.0.1

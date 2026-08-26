@@ -634,4 +634,29 @@ class Utill {
             )
         );
     }
+    /**
+     * Generic REST API capability check, shared by every controller/route's
+     * `permission_callback` in this plugin.
+     *
+     * Grants access when the current user has at least one of the given
+     * capabilities; otherwise returns a WP_Error with the correct 401
+     * (not logged in) or 403 (logged in, but lacking the capability) status.
+     *
+     * @param string|array $capabilities One capability, or an array of capabilities -
+     *                                   access is granted if the current user has any one of them.
+     * @param string       $context      Permission check context.
+     * @return true|\WP_Error
+     */
+    public static function current_user_has_capability( $capabilities, $context = '' ) {
+        $capabilities = apply_filters( 'multivendorx_permissions_check', $capabilities, $context );
+
+        foreach ( (array) $capabilities as $capability ) {
+            if ( current_user_can( $capability ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }

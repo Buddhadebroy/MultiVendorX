@@ -72,7 +72,7 @@ const MinMax = ({ product, setProduct }) => {
 	return (
 		<CardComponent
 			title={__('Min/Max', 'multivendorx')}
-			desc={__('Lore ipsum dolor sit amet', 'multivendorx')}
+			desc={__('Define the minimum and maximum values.', 'multivendorx')}
 		>
 			<FormGroupWrapperComponent>
 				{/* Quantity */}

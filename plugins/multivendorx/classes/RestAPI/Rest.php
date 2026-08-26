@@ -362,7 +362,7 @@ class Rest {
             'product_variation',
             'product_shipping_class',
             'attributes',
-            'product_tag'
+            'product_tag',
         );
 
         if ( is_user_logged_in() && $request_method === 'GET' && in_array( $post_type, $private_post_types, true ) ) {
@@ -1015,7 +1015,7 @@ class Rest {
             return $args;
         }
 
-        $visibility = MultiVendorX()->setting->get_setting('shipping_class_access','store');
+        $visibility = MultiVendorX()->setting->get_setting( 'shipping_class_access', 'store' );
 
         if ( 'both' === $visibility ) {
             $args['meta_query'] = array(

@@ -605,7 +605,7 @@ class Utill {
 
     public function set_activity_logs( $store_id, $message, $tag = '' ) {
         global $wpdb;
-        $table_name = $wpdb->prefix . Utill::TABLES['activity_logs'];
+        $table_name = $wpdb->prefix . self::TABLES['activity_logs'];
 
         $wpdb->insert(
             $table_name,
@@ -624,7 +624,7 @@ class Utill {
 
     public function get_activity_logs( $store_id, $limit = 10 ) {
         global $wpdb;
-        $table_name = $wpdb->prefix . Utill::TABLES['activity_logs'];
+        $table_name = $wpdb->prefix . self::TABLES['activity_logs'];
 
         return $wpdb->get_results(
             $wpdb->prepare(
@@ -658,5 +658,4 @@ class Utill {
 
         return false;
     }
-
 }

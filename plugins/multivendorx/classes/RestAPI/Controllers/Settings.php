@@ -75,7 +75,7 @@ class Settings extends \WP_REST_Controller {
      * @param object $request The REST request object.
      */
     public function update_item_permissions_check( $request ) {
-        return Utill::current_user_has_capability( array( 'manage_options','edit_stores' ) );
+        return Utill::current_user_has_capability( array( 'manage_options', 'edit_stores' ) );
     }
 
     public function get_item_permissions_check( $request ) {
@@ -231,9 +231,9 @@ class Settings extends \WP_REST_Controller {
             $action    = $request->get_param( 'action' );
 
             // Setup wizard module.
-            $modules = $request->get_param( 'modules' ) ?? array();
+            $modules  = $request->get_param( 'modules' ) ?? array();
             $response = rest_ensure_response( array() );
-            $result = MultiVendorX()->modules->activate_modules( $modules );
+            $result   = MultiVendorX()->modules->activate_modules( $modules );
             $response->set_data( $result );
             // Handle the actions.
             switch ( $action ) {

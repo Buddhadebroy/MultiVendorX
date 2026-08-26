@@ -110,7 +110,6 @@ class Country_Shipping extends \WC_Shipping_Method {
         $amount = $this->calculate_per_seller( $products, $destination_country, $destination_state, $store_id );
 
         $this->add_store_shipping_rates( $store_id, $amount );
-
     }
 
     /**
@@ -316,5 +315,4 @@ class Country_Shipping extends \WC_Shipping_Method {
             );
         }
     }
-
 }

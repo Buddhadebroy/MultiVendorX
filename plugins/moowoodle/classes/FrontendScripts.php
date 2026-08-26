@@ -145,7 +145,7 @@ class FrontendScripts {
             'moowoodle_frontend_styles',
             array(
                 'moowoodle-my-courses' => array(
-                    'src'  => self::get_asset_path() . "styles/block/my-courses/index.css",
+                    'src' => self::get_asset_path() . 'styles/block/my-courses/index.css',
                 ),
             )
         );

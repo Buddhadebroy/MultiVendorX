@@ -58,7 +58,7 @@ class Frontend {
         add_filter( 'wp_insert_attachment_data', array( $this, 'attach_store_owner_id' ), 10, 1 );
         add_action( 'woocommerce_account_dashboard', array( $this, 'add_dashboard_button' ) );
 
-        if (is_plugin_active( 'woocommerce-product-stock-alert/product_stock_alert.php' )) {
+        if ( is_plugin_active( 'woocommerce-product-stock-alert/product_stock_alert.php' ) ) {
             add_filter( 'notifima_permissions_check', array( $this, 'add_permission_capability' ), 10, 2 );
             add_filter( 'notifima_subscribers_args', array( $this, 'get_subscribers_args' ), 10, 2 );
         }
@@ -125,7 +125,7 @@ class Frontend {
      * @return array
      */
     public function get_subscribers_args( $args, $request ) {
-        $store_id =  MultiVendorX()->active_store;
+        $store_id = MultiVendorX()->active_store;
 
         if ( $store_id ) {
             $args['query']['meta_query'][] = array(

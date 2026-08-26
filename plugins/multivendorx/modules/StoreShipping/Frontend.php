@@ -50,7 +50,7 @@ class Frontend {
 	 */
     public function register_script( $scripts ) {
         $base_url  = FrontendScripts::get_asset_path();
-        $asset_url = FrontendScripts::get_asset_path('file') . 'modules/StoreShipping/block/view.asset.php';
+        $asset_url = FrontendScripts::get_asset_path( 'file' ) . 'modules/StoreShipping/block/view.asset.php';
 
         $asset        = file_exists( $asset_url ) ? require $asset_url : array();
         $dependencies = $asset['dependencies'] ?? array();

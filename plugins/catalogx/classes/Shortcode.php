@@ -84,5 +84,4 @@ class Shortcode {
 
         return '<div id="catalogx-excluded-products" data-attributes="' . $json_attrs . '"></div>';
     }
-
 }

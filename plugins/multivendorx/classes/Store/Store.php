@@ -637,7 +637,7 @@ class Store {
         }
 
         $exclude_keys = array( 'isCustom', 'title', 'description', 'label', 'desc', 'primary' );
-        if ( !empty( $type ) ) {
+        if ( ! empty( $type ) ) {
             foreach ( $payment_methods as $method_id => $method ) {
                 if ( ! empty( $method['primary'] ) && 'name' === $type ) {
                     return $method_id;

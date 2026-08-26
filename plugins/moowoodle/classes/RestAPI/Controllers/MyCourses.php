@@ -69,7 +69,7 @@ class MyCourses extends \WP_REST_Controller {
             $per_page = max( 1, intval( $request->get_param( 'row' ) ?? 10 ) );
             $page     = max( 1, intval( $request->get_param( 'page' ) ?? 1 ) );
             $offset   = ( $page - 1 ) * $per_page;
-            $status = sanitize_text_field( $request->get_param( 'status' ) );
+            $status   = sanitize_text_field( $request->get_param( 'status' ) );
 
             // Allow pre-filtering by custom filters.
             $user_courses_details = apply_filters( 'moowoodle_user_courses_cohorts_groups_data', null, $request );
@@ -145,11 +145,11 @@ class MyCourses extends \WP_REST_Controller {
                 $course = $course[0] ?? array();
 
                 $formatted_enrolled_date = '';
-               if ( ! empty( $enrollment['enrollment_date'] ) ) {
+				if ( ! empty( $enrollment['enrollment_date'] ) ) {
                     $timestamp = strtotime( $enrollment['enrollment_date'] );
                     if ( $timestamp ) {
                         $formatted_enrolled_date = wp_date( 'M j, Y', $timestamp );
-                    }
+					}
                 }
 
                 $courses[] = array(
@@ -171,7 +171,6 @@ class MyCourses extends \WP_REST_Controller {
 
             $response->set_data( $courses );
             return $response;
-
         } catch ( \Exception $e ) {
             return Util::server_error( $e );
         }

@@ -327,8 +327,8 @@ class Transactions extends \WP_REST_Controller {
         }
 
         $threshold_amount = MultiVendorX()->setting->get_setting( 'payout_threshold_amount', 0 );
-        $transaction = Transaction::get_balances_for_store( $store_id );
-        $balance         = $transaction['balance'];
+        $transaction      = Transaction::get_balances_for_store( $store_id );
+        $balance          = $transaction['balance'];
 
         if ( $disbursement ) {
             $method = $request->get_param( 'method' );
@@ -395,7 +395,7 @@ class Transactions extends \WP_REST_Controller {
         $should_update_meta = true;
 
         if ( 'automatic' === $withdraw_type && $threshold_amount < $amount ) {
-            $payment_method = $store->get_payment_method('name') ?? '';
+            $payment_method = $store->get_payment_method( 'name' ) ?? '';
 
             if ( ! empty( $payment_method ) && ( 'stripe-connect' === $payment_method || 'paypal-payout' === $payment_method ) ) {
                 do_action( "multivendorx_process_{$payment_method}_payment", $store_id, $amount, null, null, null );
@@ -404,7 +404,7 @@ class Transactions extends \WP_REST_Controller {
             }
         }
 
-        if ( $should_update_meta && ! empty( $store->get_payment_method('name') ) ) {
+        if ( $should_update_meta && ! empty( $store->get_payment_method( 'name' ) ) ) {
             $store->update_meta( Utill::STORE_SETTINGS_KEYS['request_withdrawal_amount'], $amount );
 
             MultiVendorX()->notifications->send_notification_helper(

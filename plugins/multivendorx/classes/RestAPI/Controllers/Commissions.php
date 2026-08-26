@@ -212,7 +212,7 @@ class Commissions extends \WP_REST_Controller {
             if ( $ids ) {
                 $filter['ID'] = $ids;
             }
-            
+
             // Default: latest first.
             $filter['order_by'] = $order_by ? $order_by : 'created_at';
             $filter['order']    = strtolower( $order ) === 'asc' ? 'ASC' : 'DESC';

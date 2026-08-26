@@ -165,7 +165,7 @@ class Notifications extends \WP_REST_Controller {
                         'canDelete' => false,
                     );
 
-                    if ($row->customer_enabled) {
+                    if ( $row->customer_enabled ) {
                         $recipients[] = array(
                             'id'        => $id++,
                             'type'      => 'Customer',
@@ -174,7 +174,6 @@ class Notifications extends \WP_REST_Controller {
                             'canDelete' => false,
                         );
                     }
-
 
                     // Add any custom emails.
                     foreach ( $custom_emails as $email ) {

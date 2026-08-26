@@ -108,11 +108,11 @@ class Rest extends \WP_REST_Controller {
                 $request->get_param( 'end_date' )
             );
 
-            $allowed_order_by = array('created_at','updated_at','id','store_id','product_id');
+            $allowed_order_by   = array( 'created_at', 'updated_at', 'id', 'store_id', 'product_id' );
             $requested_order_by = $request->get_param( 'order_by' );
-            $order_by = in_array( $requested_order_by, $allowed_order_by, true )
+            $order_by           = in_array( $requested_order_by, $allowed_order_by, true )
                 ? $requested_order_by : 'created_at';
-            $order    = strtoupper( $request->get_param( 'order' ) ) === 'ASC' ? 'ASC' : 'DESC';
+            $order              = strtoupper( $request->get_param( 'order' ) ) === 'ASC' ? 'ASC' : 'DESC';
 
             // Prepare args.
             $args = array(

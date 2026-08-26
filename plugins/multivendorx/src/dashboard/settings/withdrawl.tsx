@@ -44,7 +44,7 @@ const Withdrawl: React.FC = () => {
 		(appLocalizer.store_payment_settings as StorePaymentConfig) || {};
 
 	const filteredStorePayment = Object.fromEntries(
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		 
 		Object.entries(storePayment).filter(([_, value]) => value !== null)
 	);
 

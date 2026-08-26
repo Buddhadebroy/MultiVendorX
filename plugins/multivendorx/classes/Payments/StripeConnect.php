@@ -132,7 +132,7 @@ class StripeConnect {
                     'label'              => __( 'Redirect url', 'multivendorx' ),
                     'text'               => $redirect_url,
                     'settingDescription' => __( 'URL Stripe uses to return sellers after OAuth approval. Must match the Stripe app settings.', 'multivendorx' ),
-                    'desc' => sprintf(
+                    'desc'               => sprintf(
                         /* translators: %1$s: Stripe OAuth callback URL. */
                         __(
                             'Copy this URL exactly into your Stripe Connect app settings:<br/>%1$s<br/><a href="https://docs.stripe.com/connect/oauth-reference" class="link-item" target="_blank">Stripe OAuth redirect setup <i class="adminfont-external"></i></a>',
@@ -282,7 +282,9 @@ class StripeConnect {
         }
 
         $store_id = MultiVendorX()->active_store;
-        if( empty( $store_id )) return false;
+        if ( empty( $store_id ) ) {
+			return false;
+        }
 
         $config = $this->get_store_stripe_config();
         $store  = $config['store'];
@@ -385,7 +387,9 @@ class StripeConnect {
         }
 
         $store_id = MultiVendorX()->active_store;
-        if( empty( $store_id )) return false;
+        if ( empty( $store_id ) ) {
+			return false;
+        }
 
         $config = $this->get_store_stripe_config();
         $store  = $config['store'];
@@ -393,7 +397,7 @@ class StripeConnect {
             return;
         }
         $account_id = $store->get_payment_method()['stripe-connect'][ Utill::STORE_SETTINGS_KEYS['stripe_account_id'] ] ?? '';
-        
+
         if ( $account_id && $config['client_id'] && $config['secret_key'] ) {
             wp_remote_post(
                 'https://connect.stripe.com/oauth/deauthorize',
@@ -493,9 +497,9 @@ class StripeConnect {
      * @return array|false
      */
     public function make_stripe_api_call( $url, $data = array(), $method = 'POST' ) {
-        $settings = MultiVendorX()->setting->get_setting( 'payment_methods', array() );
-		$stripe   = $settings['stripe-connect'] ?? array();
-		$mode     = $stripe['payment_mode'] ?? 'test';
+        $settings   = MultiVendorX()->setting->get_setting( 'payment_methods', array() );
+		$stripe     = $settings['stripe-connect'] ?? array();
+		$mode       = $stripe['payment_mode'] ?? 'test';
 		$secret_key = 'test' === $mode ? ( $stripe['test_secret_key'] ?? '' ) : ( $stripe['live_secret_key'] ?? '' );
 
         if ( empty( $secret_key ) ) {

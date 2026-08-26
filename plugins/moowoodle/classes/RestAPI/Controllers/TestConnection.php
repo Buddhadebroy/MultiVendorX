@@ -349,7 +349,7 @@ class TestConnection extends \WP_REST_Controller {
 
 		if ( $user_id > 0 ) {
 			$test_user_payload['id'] = $user_id;
-			unset( $test_user_payload ['createpassword']);
+			unset( $test_user_payload ['createpassword'] );
 		}
 
 		return array( $test_user_payload );

@@ -9,7 +9,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 const Attributes = ({ product, setProduct, productFields }) => {
     const [showAttributeSelect, setShowAttributeSelect] = useState(false);
     const [existingAttributes, setExistingAttributes] = useState([]);

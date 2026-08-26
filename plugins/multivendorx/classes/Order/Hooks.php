@@ -177,8 +177,8 @@ class Hooks {
             return;
         }
 
-        $store_order  = MultiVendorX()->order->create_store_orders( $order );
-        if( $store_order ){
+        $store_order = MultiVendorX()->order->create_store_orders( $order );
+        if ( $store_order ) {
             $order->update_meta_data( Utill::ORDER_META_SETTINGS['has_sub_order'], true );
             $order->save();
         }

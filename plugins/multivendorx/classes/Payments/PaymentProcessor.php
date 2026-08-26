@@ -52,7 +52,7 @@ class PaymentProcessor {
 		if ( $method ) {
 			$payment_method = $method;
 		} else {
-			$payment_method = $store->get_payment_method('name') ?? '';
+			$payment_method = $store->get_payment_method( 'name' ) ?? '';
 		}
 
 		if ( ! $disbursement && ( 'bank-transfer' === $payment_method || 'cash' === $payment_method || 'custom-gateway' === $payment_method ) ) {
@@ -60,12 +60,12 @@ class PaymentProcessor {
 		}
 
 		if ( ! $order_id ) {
-				$withdrawals_fees = MultiVendorX()->setting->get_setting( 'withdrawals_fees', array() );
-				$withdrawals_fees = reset( $withdrawals_fees );
+				$withdrawals_fees  = MultiVendorX()->setting->get_setting( 'withdrawals_fees', array() );
+				$withdrawals_fees  = reset( $withdrawals_fees );
 				$free_withdrawals  = (int) ( $withdrawals_fees['free_withdrawals'] ?? 0 );
 				$withdrawals_count = (int) $store->get_meta( Utill::STORE_SETTINGS_KEYS['withdrawals_count'] );
 
-				if ( $withdrawals_count > $free_withdrawals ) {
+			if ( $withdrawals_count > $free_withdrawals ) {
 				$deduct_amount = (float) $amount * ( (float) $withdrawals_fees['withdrawal_percentage'] / 100 ) + (float) $withdrawals_fees['withdrawal_fixed'];
 				$amount        = $amount - $deduct_amount;
 
@@ -172,7 +172,7 @@ class PaymentProcessor {
 			'transaction_type' => 'Withdrawal',
 			'amount'           => $amount,
 			'currency'         => get_woocommerce_currency(),
-			'payment_method'   => $store->get_payment_method('name'),
+			'payment_method'   => $store->get_payment_method( 'name' ),
 			'narration'        => $note ? $note : ( ( 'success' === $status )
 									? "Withdrawal released via {$method} Payment Processor"
 									: "Withdrawal failed via {$method} Payment Processor" ),
@@ -284,7 +284,7 @@ class PaymentProcessor {
                 'transaction_type' => 'COD received',
                 'amount'           => $amount,
                 'currency'         => get_woocommerce_currency(),
-                'payment_method'   => $store->get_payment_method('name') ?? '',
+                'payment_method'   => $store->get_payment_method( 'name' ) ?? '',
                 'narration'        => 'COD payment received for order no. - ' . $order_id,
                 'status'           => 'Completed',
             );

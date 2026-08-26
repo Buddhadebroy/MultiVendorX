@@ -199,7 +199,7 @@ class Transaction {
         $where = array();
 
         // Extract and sanitize order/orderBy early so they don't go into WHERE.
-        $allowed = array('created_at', 'entry_type', 'transaction_type', 'id', 'store_id', 'order_id', 'commission_id'); 
+        $allowed  = array( 'created_at', 'entry_type', 'transaction_type', 'id', 'store_id', 'order_id', 'commission_id' );
         $order_by = in_array( $args['order_by'], $allowed, true ) ? $args['order_by'] : '';
         $order    = isset( $args['order'] ) ? strtoupper( $args['order'] ) : 'ASC';
 

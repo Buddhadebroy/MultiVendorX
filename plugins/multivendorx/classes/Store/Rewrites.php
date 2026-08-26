@@ -216,7 +216,7 @@ class Rewrites {
     }
 
     public function set_breadcrumbs_title( $items ) {
-         if ( ! get_query_var( $this->custom_store_url ) ) {
+		if ( ! get_query_var( $this->custom_store_url ) ) {
             return $items;
         }
 

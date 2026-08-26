@@ -424,7 +424,7 @@ class FrontendScripts {
         $localize_scripts = apply_filters(
             'catalogx_localize_scripts',
             array(
-                'catalogx-admin-script'                 => array(
+                'catalogx-admin-script'                  => array(
                     'object_name' => 'appLocalizer',
                     'data'        => array_merge(
                         $base_rest,
@@ -465,11 +465,11 @@ class FrontendScripts {
                         )
                     ),
                 ),
-                'catalogx-enquiry-frontend-script'      => array(
+                'catalogx-enquiry-frontend-script'       => array(
                     'object_name' => 'enquiryFrontend',
                     'data'        => self::get_base_ajax_data( 'catalogx-enquiry-frontend-script' ),
                 ),
-                'catalogx-enquiry-form-script'          => array(
+                'catalogx-enquiry-form-script'           => array(
                     'object_name' => 'enquiryFormData',
                     'data'        => array_merge(
                         $base_rest,
@@ -491,7 +491,7 @@ class FrontendScripts {
                         )
                     ),
                 ),
-                'catalogx-add-to-quote-cart-script'     => array(
+                'catalogx-add-to-quote-cart-script'      => array(
                     'object_name' => 'addToQuoteCart',
                     'data'        => array_merge(
                         $base_rest,
@@ -501,23 +501,23 @@ class FrontendScripts {
                         )
                     ),
                 ),
-                'catalogx-enquiry-button-editor-script' => array(
+                'catalogx-enquiry-button-editor-script'  => array(
                     'object_name' => 'enquiryButton',
                     'data'        => $base_rest,
                 ),
-                'catalogx-quote-button-editor-script'   => array(
+                'catalogx-quote-button-editor-script'    => array(
                     'object_name' => 'quoteButton',
                     'data'        => $base_rest,
                 ),
-                'catalogx-enquiry-button-view-script'   => array(
+                'catalogx-enquiry-button-view-script'    => array(
                     'object_name' => 'enquiryButton',
                     'data'        => $base_rest,
                 ),
-                'catalogx-quote-button-view-script'     => array(
+                'catalogx-quote-button-view-script'      => array(
                     'object_name' => 'quoteButton',
                     'data'        => $base_rest,
                 ),
-                'catalogx-quote-cart-editor-script'     => array(
+                'catalogx-quote-cart-editor-script'      => array(
                     'object_name' => 'quoteCart',
                     'data'        => array_merge(
                         $base_rest,
@@ -529,7 +529,7 @@ class FrontendScripts {
                         )
                     ),
                 ),
-                'catalogx-quote-cart-view-script'       => array(
+                'catalogx-quote-cart-view-script'        => array(
                     'object_name' => 'quoteCart',
                     'data'        => array_merge(
                         $base_rest,
@@ -541,7 +541,7 @@ class FrontendScripts {
                         )
                     ),
                 ),
-                'catalogx-excluded-products-view-script'       => array(
+                'catalogx-excluded-products-view-script' => array(
                     'object_name' => 'excludedProducts',
                     'data'        => $base_rest,
                 ),

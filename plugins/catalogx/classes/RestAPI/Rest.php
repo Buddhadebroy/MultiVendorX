@@ -79,7 +79,7 @@ class Rest {
         $prefixes = array( 'catalog', 'enquiry', 'quote' );
 
         $config = array(
-            'products' => array(
+            'products'   => array(
                 'setting' => 'product_list',
             ),
             'categories' => array(
@@ -87,12 +87,12 @@ class Rest {
                 'taxonomy' => 'product_cat',
                 'query'    => 'category',
             ),
-            'tags' => array(
+            'tags'       => array(
                 'setting'  => 'tag_list',
                 'taxonomy' => 'product_tag',
                 'query'    => 'tag',
             ),
-            'brands' => array(
+            'brands'     => array(
                 'setting'  => 'brand_list',
                 'taxonomy' => 'product_brand',
                 'query'    => 'tax_query',
@@ -102,7 +102,6 @@ class Rest {
         $product_ids = array();
 
         foreach ( $exclude_types as $type ) {
-
             if ( empty( $config[ $type ] ) ) {
                 continue;
             }
@@ -134,7 +133,6 @@ class Rest {
             );
 
             if ( 'tax_query' === $config[ $type ]['query'] ) {
-
                 $query['tax_query'] = array(
                     array(
                         'taxonomy' => $config[ $type ]['taxonomy'],
@@ -142,9 +140,7 @@ class Rest {
                         'terms'    => $ids,
                     ),
                 );
-
             } else {
-
                 $query[ $config[ $type ]['query'] ] = array_map(
                     static function ( $term_id ) use ( $config, $type ) {
                         $term = get_term( $term_id, $config[ $type ]['taxonomy'] );

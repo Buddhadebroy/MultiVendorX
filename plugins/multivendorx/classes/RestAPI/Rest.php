@@ -342,7 +342,6 @@ class Rest {
      * @param string $post_type Post type.
      */
     public function grant_woocommerce_rest_permission( $permission, $context, $object_id, $post_type ) {
-        $request_method = $_SERVER['REQUEST_METHOD'] ?? '';
 
         $public_post_types = array(
             'product',
@@ -350,7 +349,7 @@ class Rest {
             'product_cat',
         );
 
-        if ( $request_method === 'GET' && in_array( $post_type, $public_post_types, true ) ) {
+        if ( 'read' === $context && in_array( $post_type, $public_post_types, true ) ) {
             return true;
         }
 
@@ -365,11 +364,11 @@ class Rest {
             'product_tag',
         );
 
-        if ( is_user_logged_in() && $request_method === 'GET' && in_array( $post_type, $private_post_types, true ) ) {
+        if ( is_user_logged_in() && 'read' === $context && in_array( $post_type, $private_post_types, true ) ) {
             return true;
         }
 
-        if ( $request_method === 'GET' && 'payment_gateways' === $post_type ) {
+        if ( 'read' === $context && 'payment_gateways' === $post_type ) {
             return Utill::current_user_has_capability( array( 'edit_stores' ) );
         }
 

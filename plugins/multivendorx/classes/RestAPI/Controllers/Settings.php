@@ -142,6 +142,14 @@ class Settings extends \WP_REST_Controller {
             $settingsname      = str_replace( '-', '_', $settingsname );
             $optionname        = 'multivendorx_' . $settingsname . '_settings';
 
+            if ( ( 'store_permissions' === $settingsname || 'user_permissions' === $settingsname ) && ! Utill::current_user_has_capability( array( 'manage_options' ) ) ) {
+                return new \WP_Error(
+                    'rest_forbidden',
+                    __( 'You are not allowed to change role permissions.', 'multivendorx' ),
+                    array( 'status' => 403 )
+                );
+            }
+
             // Save the settings in database.
             MultiVendorX()->setting->update_option( $optionname, $get_settings_data );
 

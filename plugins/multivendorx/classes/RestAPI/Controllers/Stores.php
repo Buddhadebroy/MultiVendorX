@@ -355,6 +355,7 @@ class Stores extends \WP_REST_Controller {
                         array( 'status' => 403 )
                     );
                 }
+
                 $store = new Store( (int) $store_data['id'] );
                 unset( $store_data['id'], $store_data['status'] );
 

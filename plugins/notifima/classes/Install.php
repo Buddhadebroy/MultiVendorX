@@ -45,6 +45,11 @@ class Install {
         add_action( 'init', array( $this, 'run_migration' ) );
     }
 
+    /**
+     * Run first-time install or version-gated migration on plugin init.
+     *
+     * @return void
+     */
     public function run_migration() {
         $previous_version = get_option( 'notifima_version', false );
         if ( ! $previous_version ) {
@@ -91,6 +96,8 @@ class Install {
 
     /**
      * Runs the database migration process.
+     *
+     * @param string $previous_version The previously installed plugin version.
      */
     public static function do_migration( $previous_version ) {
 

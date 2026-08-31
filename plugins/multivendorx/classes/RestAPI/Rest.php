@@ -342,7 +342,10 @@ class Rest {
      * @param string $post_type Post type.
      */
     public function grant_woocommerce_rest_permission( $permission, $context, $object_id, $post_type ) {
-
+        // Decide on $context (the effective operation WooCommerce is about to perform),
+        // not the raw transport verb — a client can dispatch a write through a request
+        // whose $_SERVER['REQUEST_METHOD'] is GET via _method / X-HTTP-Method-Override,
+        // and $context already reflects the real, post-override operation.
         $public_post_types = array(
             'product',
             'shop_coupon',

@@ -348,6 +348,14 @@ class Stores extends \WP_REST_Controller {
             $store_data['status']      = 'active';
 
             if ( ! empty( $store_data['id'] ) ) {
+                if ( ! StoreUtil::current_user_can_manage_store( (int) $store_data['id'] ) ) {
+                    return new \WP_Error(
+                        'rest_forbidden',
+                        __( 'You are not allowed to update this store.', 'multivendorx' ),
+                        array( 'status' => 403 )
+                    );
+                }
+
                 $store = new Store( (int) $store_data['id'] );
                 unset( $store_data['id'], $store_data['status'] );
 

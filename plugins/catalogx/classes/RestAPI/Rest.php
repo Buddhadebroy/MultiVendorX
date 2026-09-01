@@ -51,9 +51,10 @@ class Rest {
      * @return bool
      */
     public function grant_woocommerce_rest_permission( $permission, $context, $object_id, $post_type ) {
-        $request_method = $_SERVER['REQUEST_METHOD'] ?? '';
-
-        if ( 'GET' === $request_method && 'product' === $post_type ) {
+        // Decide on $context (the effective operation), not the raw transport verb —
+        // a client can dispatch a write through a request whose $_SERVER['REQUEST_METHOD']
+        // is GET via _method / X-HTTP-Method-Override.
+        if ( 'read' === $context && 'product' === $post_type ) {
             return true;
         }
 

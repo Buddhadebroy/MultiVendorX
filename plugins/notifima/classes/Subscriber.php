@@ -84,6 +84,7 @@ class Subscriber {
     public function send_instock_notification_cron() {
         global $wpdb;
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         $product_ids = $wpdb->get_col(
             $wpdb->prepare(
                 "
@@ -341,7 +342,7 @@ class Subscriber {
 
         // Update subscriber status.
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-        $response = $wpdb->update(
+        $wpdb->update(
             "{$wpdb->prefix}notifima_subscribers",
             array( 'status' => $status ),
             array( 'id' => $notifima_id )

@@ -80,24 +80,6 @@ const ProductTab = () => {
 			});
 	}, [linkType]);
 
-	/**
-	 * Show enrollment extension only when
-	 * expiry days has been entered.
-	 */
-	const showEnrollmentExtension = Number(expiryDays) > 0;
-
-	/**
-	 * If expiry days is removed, automatically disable
-	 * enrollment extension and clear its values.
-	 */
-	useEffect(() => {
-		if (!showEnrollmentExtension) {
-			setEnableEnrollmentExtension(false);
-			setExtensionDays('');
-			setExtensionCost('');
-		}
-	}, [showEnrollmentExtension]);
-
 	return (
 		<>
 			<div className="options_group">
@@ -213,74 +195,72 @@ const ProductTab = () => {
 						</p>
 
 						{/* Enrollment Extension */}
-						{showEnrollmentExtension && (
-							<div className="enrollment-extension">
-								<ToggleControl
-									label={__(
-										'Enable Enrollment Extension',
-										'moowoodle'
-									)}
-									checked={enableEnrollmentExtension}
-									onChange={(value) => {
-										setEnableEnrollmentExtension(value);
-
-										if (!value) {
-											setExtensionDays('');
-											setExtensionCost('');
-										}
-									}}
-								/>
-
-								{enableEnrollmentExtension && (
-									<>
-										{/* Extension Days */}
-										<p className="form-field">
-											<label htmlFor="enrollment_extension_days">
-												{__(
-													'Extension Days',
-													'moowoodle'
-												)}
-											</label>
-
-											<input
-												type="number"
-												id="enrollment_extension_days"
-												min="1"
-												value={extensionDays}
-												onChange={(event) =>
-													setExtensionDays(
-														event.target.value
-													)
-												}
-											/>
-										</p>
-
-										{/* Extension Cost */}
-										<p className="form-field">
-											<label htmlFor="enrollment_extension_cost">
-												{__(
-													'Extension Cost',
-													'moowoodle'
-												)}
-											</label>
-
-											<input
-												type="number"
-												id="enrollment_extension_cost"
-												min="0"
-												step="0.01"
-												value={extensionCost}
-												onChange={(event) =>
-													setExtensionCost(
-														event.target.value
-													)
-												}
-											/>
-										</p>
-									</>
+						<div className="enrollment-extension">
+							<ToggleControl
+								label={__(
+									'Enable Enrollment Extension',
+									'moowoodle'
 								)}
-							</div>
-						)}
+								checked={enableEnrollmentExtension}
+								onChange={(value) => {
+									setEnableEnrollmentExtension(value);
+
+									if (!value) {
+										setExtensionDays('');
+										setExtensionCost('');
+									}
+								}}
+							/>
+
+							{enableEnrollmentExtension && (
+								<>
+									{/* Extension Days */}
+									<p className="form-field">
+										<label htmlFor="enrollment_extension_days">
+											{__(
+												'Extension Days',
+												'moowoodle'
+											)}
+										</label>
+
+										<input
+											type="number"
+											id="enrollment_extension_days"
+											min="1"
+											value={extensionDays}
+											onChange={(event) =>
+												setExtensionDays(
+													event.target.value
+												)
+											}
+										/>
+									</p>
+
+									{/* Extension Cost */}
+									<p className="form-field">
+										<label htmlFor="enrollment_extension_cost">
+											{__(
+												'Extension Cost',
+												'moowoodle'
+											)}
+										</label>
+
+										<input
+											type="number"
+											id="enrollment_extension_cost"
+											min="0"
+											step="0.01"
+											value={extensionCost}
+											onChange={(event) =>
+												setExtensionCost(
+													event.target.value
+												)
+											}
+										/>
+									</p>
+								</>
+							)}
+						</div>
 
 						{!moowoodleProduct.khali_dabba && (
 							<span className="description">

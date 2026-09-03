@@ -118,10 +118,10 @@ class Rest extends \WP_REST_Controller {
     }
 
     /**
-    * Get review items with optional pagination, date filters, and counters
-    *
-    * @param object $request Request data.
-    */
+     * Get review items with optional pagination, date filters, and counters
+     *
+     * @param object $request Request data.
+     */
     public function get_items( $request ) {
         $nonce = $request->get_header( 'X-WP-Nonce' );
         if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
@@ -385,7 +385,7 @@ class Rest extends \WP_REST_Controller {
                         continue;
                     }
 
-                    $file = array(
+                    $file   = array(
                         'name'     => $name,
                         'type'     => sanitize_mime_type( $type ),
                         'tmp_name' => $tmp,

@@ -8,6 +8,7 @@
 namespace MultiVendorX\StoreReview;
 
 use MultiVendorX\Store\Store;
+use MultiVendorX\Store\StoreUtil;
 use MultiVendorX\StoreReview\Util;
 use MultiVendorX\Utill;
 
@@ -47,12 +48,12 @@ class Rest extends \WP_REST_Controller {
                 array(
                     'methods'             => \WP_REST_Server::READABLE,
                     'callback'            => array( $this, 'get_items' ),
-                    'permission_callback' => array( $this, 'permissions_check' ),
+                    'permission_callback' => '__return_true',
                 ),
                 array(
                     'methods'             => \WP_REST_Server::CREATABLE,
                     'callback'            => array( $this, 'create_item' ),
-                    'permission_callback' => array( $this, 'permissions_check' ),
+                    'permission_callback' => array( $this, 'create_item_permissions_check' ),
                 ),
             )
         );
@@ -64,7 +65,7 @@ class Rest extends \WP_REST_Controller {
                 array(
                     'methods'             => \WP_REST_Server::READABLE,
                     'callback'            => array( $this, 'get_item' ),
-                    'permission_callback' => array( $this, 'permissions_check' ),
+                    'permission_callback' => array( $this, 'update_item_permissions_check' ),
                     'args'                => array(
                         'id' => array( 'required' => true ),
                     ),
@@ -77,7 +78,7 @@ class Rest extends \WP_REST_Controller {
                 array(
                     'methods'             => \WP_REST_Server::DELETABLE,
                     'callback'            => array( $this, 'delete_item' ),
-                    'permission_callback' => array( $this, 'update_item_permissions_check' ),
+                    'permission_callback' => array( $this, 'delete_item_permissions_check' ),
                     'args'                => array(
                         'id' => array( 'required' => true ),
                     ),
@@ -92,8 +93,8 @@ class Rest extends \WP_REST_Controller {
      * @param object $request Request data.
      * @return true|\WP_Error
      */
-    public function permissions_check( $request ) {
-        return Utill::current_user_has_capability( array( 'read', 'edit_stores' ) );
+    public function create_item_permissions_check( $request ) {
+        return Utill::current_user_has_capability( array( 'customer', 'edit_stores', 'manage_options' ) );
     }
 
     /**
@@ -103,7 +104,17 @@ class Rest extends \WP_REST_Controller {
      * @return bool
      */
     public function update_item_permissions_check( $request ) {
-        return Utill::current_user_has_capability( array( 'edit_stores' ) );
+        return Utill::current_user_has_capability( array( 'edit_stores', 'manage_options' ) );
+    }
+
+    /**
+     * Delete permission.
+     *
+     * @param object $request Request data.
+     * @return bool
+     */
+    public function delete_item_permissions_check( $request ) {
+        return Utill::current_user_has_capability( array( 'manage_options' ) );
     }
 
     /**
@@ -116,22 +127,36 @@ class Rest extends \WP_REST_Controller {
         if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
             $error = new \WP_Error( 'invalid_nonce', __( 'Invalid nonce', 'multivendorx' ), array( 'status' => 403 ) );
 
-            // Log the error.
             if ( is_wp_error( $error ) ) {
                 MultiVendorX()->util->log( $error );
             }
 
             return $error;
         }
+
         try {
             $store_id = $request->get_param( 'store_id' );
+
             if ( $request->get_param( 'overview' ) ) {
                 return rest_ensure_response( $this->calculate_store_rating_summary( intval( $store_id ) ) );
             }
-			$limit          = intval( $request->get_param( 'row' ) ) ? intval( $request->get_param( 'row' ) ) : 0;
-			$page           = intval( $request->get_param( 'page' ) ) ? intval( $request->get_param( 'page' ) ) : 1;
-            $offset         = ( $page - 1 ) * $limit;
-            $status         = sanitize_text_field( $request->get_param( 'status' ) );
+
+            $limit  = intval( $request->get_param( 'row' ) ) ? intval( $request->get_param( 'row' ) ) : 0;
+            $page   = intval( $request->get_param( 'page' ) ) ? intval( $request->get_param( 'page' ) ) : 1;
+            $offset = ( $page - 1 ) * $limit;
+
+            $status = sanitize_text_field( $request->get_param( 'status' ) );
+
+            $can_manage = $store_id
+                ? StoreUtil::current_user_can_manage_store( intval( $store_id ) )
+                : Utill::current_user_has_capability( array( 'manage_options' ) );
+
+            if ( ! $can_manage ) {
+                $status = 'approved';
+            }
+
+            $cache_key = Utill::MULTIVENDORX_TRANSIENT_KEYS['review_transient'] . $store_id . ( $can_manage ? '_mgr' : '_pub' );
+
             $order_by       = sanitize_text_field( $request->get_param( 'order_by' ) );
             $order          = sanitize_text_field( $request->get_param( 'order' ) );
             $overall_rating = $request->get_param( 'overall_rating' );
@@ -144,12 +169,10 @@ class Rest extends \WP_REST_Controller {
             );
             $args  = array();
 
-            // --- Step 3: Apply Store Filter ---.
             if ( $store_id ) {
                 $args['store_id'] = intval( $store_id );
             }
 
-            // --- Step 5: Add Filters (status, date, pagination) ---.
             if ( $status ) {
                 $args['status'] = $status;
             }
@@ -165,39 +188,36 @@ class Rest extends \WP_REST_Controller {
                 $args['end_date'] = $range['end_date'];
             }
 
-            // --- Step 5.2: Filter by Overall Rating (like "4 stars & up") ---.
             if ( null !== $overall_rating && '' !== $overall_rating ) {
                 $rating = floatval( $overall_rating );
 
-                // Prevent invalid or below 1 ratings.
                 if ( $rating < 1 ) {
                     $rating = 1;
                 }
 
-                // Pass to query args.
                 $args['overall_rating'] = $rating;
             }
 
-            // --- Step 5.1: Add Sorting ---.
-            if ( ! empty( $order_by ) && ! empty( $order ) ) {
+            $allowed_order_by  = array( 'date_created', 'date_modified', 'overall_rating', 'status' );
+            $allowed_order_dir = array( 'ASC', 'DESC' );
+
+            if ( ! empty( $order_by ) && in_array( $order_by, $allowed_order_by, true )
+                && ! empty( $order ) && in_array( strtoupper( $order ), $allowed_order_dir, true ) ) {
                 $args['order_by']  = $order_by;
-                $args['order_dir'] = ! empty( $order ) ? strtoupper( $order ) : 'DESC';
+                $args['order_dir'] = strtoupper( $order );
             } else {
-                // Fallback default sort.
                 $args['order_by']  = 'date_created';
                 $args['order_dir'] = 'DESC';
             }
 
-			if ( 'same-origin' === $sec_fetch_site && preg_match( '#/dashboard/?$#', $referer ) && get_transient( Utill::MULTIVENDORX_TRANSIENT_KEYS['review_transient'] . $store_id ) ) {
-                    return get_transient( Utill::MULTIVENDORX_TRANSIENT_KEYS['review_transient'] . $store_id );
+            if ( 'same-origin' === $sec_fetch_site && preg_match( '#/dashboard/?$#', $referer ) && get_transient( $cache_key ) ) {
+                return get_transient( $cache_key );
             }
-            // --- Step 6: Fetch Review Data ---.
+
             $reviews = Util::get_review_information( $args );
 
-            // --- Step 7: Format Data for Response ---.
             $formatted = array_map( array( $this, 'prepare_rest_item_for_response' ), $reviews ? $reviews : array() );
 
-            // --- Step 8: Get Status Counters ---.
             $base_args = $args;
             unset( $base_args['limit'], $base_args['offset'], $base_args['status'] );
 
@@ -210,30 +230,31 @@ class Rest extends \WP_REST_Controller {
             $all_args  = $base_args;
             $all_count = Util::get_review_information( $all_args );
 
-            $pending_args           = $base_args;
-            $pending_args['status'] = 'pending';
-            $pending_count          = Util::get_review_information( $pending_args );
-
-            $approved_args           = $base_args;
-            $approved_args['status'] = 'approved';
-            $approved_count          = Util::get_review_information( $approved_args );
-
-            $rejected_args           = $base_args;
-            $rejected_args['status'] = 'rejected';
-            $rejected_count          = Util::get_review_information( $rejected_args );
-
             $response = rest_ensure_response( $formatted );
-            $response->header( 'X-WP-Total', $all_count );
-            $response->header( 'X-WP-Status-Pending', $pending_count );
-            $response->header( 'X-WP-Status-Approved', $approved_count );
-            $response->header( 'X-WP-Status-Rejected', $rejected_count );
+
+            if ( $can_manage ) {
+                $pending_args           = $base_args;
+                $pending_args['status'] = 'pending';
+                $pending_count          = Util::get_review_information( $pending_args );
+
+                $approved_args           = $base_args;
+                $approved_args['status'] = 'approved';
+                $approved_count          = Util::get_review_information( $approved_args );
+
+                $rejected_args           = $base_args;
+                $rejected_args['status'] = 'rejected';
+                $rejected_count          = Util::get_review_information( $rejected_args );
+
+                $response->header( 'X-WP-Total', $all_count );
+                $response->header( 'X-WP-Status-Pending', $pending_count );
+                $response->header( 'X-WP-Status-Approved', $approved_count );
+                $response->header( 'X-WP-Status-Rejected', $rejected_count );
+            } else {
+                $response->header( 'X-WP-Total', $all_count );
+            }
 
             if ( 'same-origin' === $sec_fetch_site && preg_match( '#/dashboard/?$#', $referer ) ) {
-                set_transient(
-                    Utill::MULTIVENDORX_TRANSIENT_KEYS['review_transient'] . $store_id,
-                    $response,
-                    DAY_IN_SECONDS
-                );
+                set_transient( $cache_key, $response, DAY_IN_SECONDS );
             }
 
             return $response;
@@ -278,6 +299,15 @@ class Rest extends \WP_REST_Controller {
             if ( ! $review ) {
                 return $response;
             }
+
+            if ( ! StoreUtil::current_user_can_manage_store( $review['store_id'] ?? 0 ) ) {
+                return new \WP_Error(
+                    'rest_forbidden',
+                    __( 'You are not allowed to view this review.', 'multivendorx' ),
+                    array( 'status' => 403 )
+                );
+            }
+
             $response->set_data( $this->prepare_rest_item_for_response( $review ) );
             return $response;
         } catch ( \Exception $e ) {
@@ -286,6 +316,7 @@ class Rest extends \WP_REST_Controller {
             return new \WP_Error( 'server_error', __( 'Unexpected server error', 'multivendorx' ), array( 'status' => 500 ) );
         }
     }
+
 	/**
 	 * Create a new store review via REST API.
 	 *
@@ -332,7 +363,14 @@ class Rest extends \WP_REST_Controller {
 
             $order_id = Util::is_verified_buyer( $store_id, $user_id );
 
-            $overall = array_sum( array_map( 'intval', $ratings ) ) / count( $ratings );
+            $ratings = array_map(
+                function ( $r ) {
+                        return max( 1, min( 5, intval( $r ) ) );
+                },
+                $ratings
+            );
+
+            $overall = array_sum( $ratings ) / count( $ratings );
 
             $uploaded_images = array();
             $files           = $_FILES['review_images'] ?? null;
@@ -345,6 +383,7 @@ class Rest extends \WP_REST_Controller {
                 $file_tmp    = (array) ( $files['tmp_name'] ?? array() );
                 $file_errors = array_map( 'intval', (array) ( $files['error'] ?? array() ) );
                 $file_sizes  = array_map( 'intval', (array) ( $files['size'] ?? array() ) );
+                $file_names  = array_slice( $file_names, 0, 5 );
 
                 foreach ( $file_names as $index => $name ) {
                     $tmp   = $file_tmp[ $index ] ?? '';
@@ -356,14 +395,30 @@ class Rest extends \WP_REST_Controller {
                         continue;
                     }
 
-                    $file   = array(
+                    $file = array(
                         'name'     => $name,
                         'type'     => sanitize_mime_type( $type ),
                         'tmp_name' => $tmp,
                         'error'    => $error,
                         'size'     => $size,
                     );
-                    $upload = wp_handle_upload( $file, array( 'test_form' => false ) );
+                    if ( $size > 2 * MB_IN_BYTES ) {
+                        continue;
+                    }
+
+                    $upload = wp_handle_upload(
+                        $file,
+                        array(
+							'test_form' => false,
+							'mimes'     => array(
+								'jpg|jpeg' => 'image/jpeg',
+								'png'      => 'image/png',
+								'gif'      => 'image/gif',
+								'webp'     => 'image/webp',
+							),
+                        )
+                    );
+
                     if ( ! empty( $upload['error'] ) || empty( $upload['url'] ) ) {
                         continue;
                     }
@@ -448,6 +503,14 @@ class Rest extends \WP_REST_Controller {
                     'not_found',
                     __( 'Review not found', 'multivendorx' ),
                     array( 'status' => 404 )
+                );
+            }
+
+            if ( ! StoreUtil::current_user_can_manage_store( $review['store_id'] ?? 0 ) ) {
+                return new \WP_Error(
+                    'rest_forbidden',
+                    __( 'You are not allowed to manage this review.', 'multivendorx' ),
+                    array( 'status' => 403 )
                 );
             }
 
@@ -579,6 +642,7 @@ class Rest extends \WP_REST_Controller {
             return new \WP_Error( 'server_error', __( 'Unexpected server error', 'multivendorx' ), array( 'status' => 500 ) );
         }
     }
+
     /**
      * Prepare a review item for REST API response.
      *

@@ -118,35 +118,37 @@ class Rest extends \WP_REST_Controller {
     }
 
     /**
-     * Get review items with optional pagination, date filters, and counters
-     *
-     * @param object $request Request data.
-     */
+    * Get review items with optional pagination, date filters, and counters
+    *
+    * @param object $request Request data.
+    */
     public function get_items( $request ) {
         $nonce = $request->get_header( 'X-WP-Nonce' );
         if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
             $error = new \WP_Error( 'invalid_nonce', __( 'Invalid nonce', 'multivendorx' ), array( 'status' => 403 ) );
 
+            // Log the error.
             if ( is_wp_error( $error ) ) {
                 MultiVendorX()->util->log( $error );
             }
 
             return $error;
         }
-
         try {
             $store_id = $request->get_param( 'store_id' );
-
             if ( $request->get_param( 'overview' ) ) {
                 return rest_ensure_response( $this->calculate_store_rating_summary( intval( $store_id ) ) );
             }
-
-            $limit  = intval( $request->get_param( 'row' ) ) ? intval( $request->get_param( 'row' ) ) : 0;
-            $page   = intval( $request->get_param( 'page' ) ) ? intval( $request->get_param( 'page' ) ) : 1;
-            $offset = ( $page - 1 ) * $limit;
-
-            $status = sanitize_text_field( $request->get_param( 'status' ) );
-
+			$limit          = intval( $request->get_param( 'row' ) ) ? intval( $request->get_param( 'row' ) ) : 0;
+			$page           = intval( $request->get_param( 'page' ) ) ? intval( $request->get_param( 'page' ) ) : 1;
+            $offset         = ( $page - 1 ) * $limit;
+            $status         = sanitize_text_field( $request->get_param( 'status' ) );
+            $order_by       = sanitize_text_field( $request->get_param( 'order_by' ) );
+            $order          = sanitize_text_field( $request->get_param( 'order' ) );
+            $overall_rating = $request->get_param( 'overall_rating' );
+            $sec_fetch_site = $request->get_header( 'sec_fetch_site' );
+            $referer        = $request->get_header( 'referer' );
+            
             $can_manage = $store_id
                 ? StoreUtil::current_user_can_manage_store( intval( $store_id ) )
                 : Utill::current_user_has_capability( array( 'manage_options' ) );
@@ -155,24 +157,18 @@ class Rest extends \WP_REST_Controller {
                 $status = 'approved';
             }
 
-            $cache_key = Utill::MULTIVENDORX_TRANSIENT_KEYS['review_transient'] . $store_id . ( $can_manage ? '_mgr' : '_pub' );
-
-            $order_by       = sanitize_text_field( $request->get_param( 'order_by' ) );
-            $order          = sanitize_text_field( $request->get_param( 'order' ) );
-            $overall_rating = $request->get_param( 'overall_rating' );
-            $sec_fetch_site = $request->get_header( 'sec_fetch_site' );
-            $referer        = $request->get_header( 'referer' );
-
             $range = Utill::normalize_date_range(
                 $request->get_param( 'start_date' ),
                 $request->get_param( 'end_date' )
             );
             $args  = array();
 
+            // --- Step 3: Apply Store Filter ---.
             if ( $store_id ) {
                 $args['store_id'] = intval( $store_id );
             }
 
+            // --- Step 5: Add Filters (status, date, pagination) ---.
             if ( $status ) {
                 $args['status'] = $status;
             }
@@ -188,36 +184,39 @@ class Rest extends \WP_REST_Controller {
                 $args['end_date'] = $range['end_date'];
             }
 
+            // --- Step 5.2: Filter by Overall Rating (like "4 stars & up") ---.
             if ( null !== $overall_rating && '' !== $overall_rating ) {
                 $rating = floatval( $overall_rating );
 
+                // Prevent invalid or below 1 ratings.
                 if ( $rating < 1 ) {
                     $rating = 1;
                 }
 
+                // Pass to query args.
                 $args['overall_rating'] = $rating;
             }
 
-            $allowed_order_by  = array( 'date_created', 'date_modified', 'overall_rating', 'status' );
-            $allowed_order_dir = array( 'ASC', 'DESC' );
-
-            if ( ! empty( $order_by ) && in_array( $order_by, $allowed_order_by, true )
-                && ! empty( $order ) && in_array( strtoupper( $order ), $allowed_order_dir, true ) ) {
+            // --- Step 5.1: Add Sorting ---.
+            if ( ! empty( $order_by ) && ! empty( $order ) ) {
                 $args['order_by']  = $order_by;
-                $args['order_dir'] = strtoupper( $order );
+                $args['order_dir'] = ! empty( $order ) ? strtoupper( $order ) : 'DESC';
             } else {
+                // Fallback default sort.
                 $args['order_by']  = 'date_created';
                 $args['order_dir'] = 'DESC';
             }
 
-            if ( 'same-origin' === $sec_fetch_site && preg_match( '#/dashboard/?$#', $referer ) && get_transient( $cache_key ) ) {
-                return get_transient( $cache_key );
+			if ( 'same-origin' === $sec_fetch_site && preg_match( '#/dashboard/?$#', $referer ) && get_transient( Utill::MULTIVENDORX_TRANSIENT_KEYS['review_transient'] . $store_id ) ) {
+                    return get_transient( Utill::MULTIVENDORX_TRANSIENT_KEYS['review_transient'] . $store_id );
             }
-
+            // --- Step 6: Fetch Review Data ---.
             $reviews = Util::get_review_information( $args );
 
+            // --- Step 7: Format Data for Response ---.
             $formatted = array_map( array( $this, 'prepare_rest_item_for_response' ), $reviews ? $reviews : array() );
 
+            // --- Step 8: Get Status Counters ---.
             $base_args = $args;
             unset( $base_args['limit'], $base_args['offset'], $base_args['status'] );
 
@@ -230,31 +229,30 @@ class Rest extends \WP_REST_Controller {
             $all_args  = $base_args;
             $all_count = Util::get_review_information( $all_args );
 
+            $pending_args           = $base_args;
+            $pending_args['status'] = 'pending';
+            $pending_count          = Util::get_review_information( $pending_args );
+
+            $approved_args           = $base_args;
+            $approved_args['status'] = 'approved';
+            $approved_count          = Util::get_review_information( $approved_args );
+
+            $rejected_args           = $base_args;
+            $rejected_args['status'] = 'rejected';
+            $rejected_count          = Util::get_review_information( $rejected_args );
+
             $response = rest_ensure_response( $formatted );
-
-            if ( $can_manage ) {
-                $pending_args           = $base_args;
-                $pending_args['status'] = 'pending';
-                $pending_count          = Util::get_review_information( $pending_args );
-
-                $approved_args           = $base_args;
-                $approved_args['status'] = 'approved';
-                $approved_count          = Util::get_review_information( $approved_args );
-
-                $rejected_args           = $base_args;
-                $rejected_args['status'] = 'rejected';
-                $rejected_count          = Util::get_review_information( $rejected_args );
-
-                $response->header( 'X-WP-Total', $all_count );
-                $response->header( 'X-WP-Status-Pending', $pending_count );
-                $response->header( 'X-WP-Status-Approved', $approved_count );
-                $response->header( 'X-WP-Status-Rejected', $rejected_count );
-            } else {
-                $response->header( 'X-WP-Total', $all_count );
-            }
+            $response->header( 'X-WP-Total', $all_count );
+            $response->header( 'X-WP-Status-Pending', $pending_count );
+            $response->header( 'X-WP-Status-Approved', $approved_count );
+            $response->header( 'X-WP-Status-Rejected', $rejected_count );
 
             if ( 'same-origin' === $sec_fetch_site && preg_match( '#/dashboard/?$#', $referer ) ) {
-                set_transient( $cache_key, $response, DAY_IN_SECONDS );
+                set_transient(
+                    Utill::MULTIVENDORX_TRANSIENT_KEYS['review_transient'] . $store_id,
+                    $response,
+                    DAY_IN_SECONDS
+                );
             }
 
             return $response;

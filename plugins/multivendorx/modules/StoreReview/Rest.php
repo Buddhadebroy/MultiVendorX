@@ -148,7 +148,7 @@ class Rest extends \WP_REST_Controller {
             $overall_rating = $request->get_param( 'overall_rating' );
             $sec_fetch_site = $request->get_header( 'sec_fetch_site' );
             $referer        = $request->get_header( 'referer' );
-            
+
             $can_manage = $store_id
                 ? StoreUtil::current_user_can_manage_store( intval( $store_id ) )
                 : Utill::current_user_has_capability( array( 'manage_options' ) );
@@ -361,14 +361,7 @@ class Rest extends \WP_REST_Controller {
 
             $order_id = Util::is_verified_buyer( $store_id, $user_id );
 
-            $ratings = array_map(
-                function ( $r ) {
-                        return max( 1, min( 5, intval( $r ) ) );
-                },
-                $ratings
-            );
-
-            $overall = array_sum( $ratings ) / count( $ratings );
+            $overall = array_sum( array_map( 'intval', $ratings ) ) / count( $ratings );
 
             $uploaded_images = array();
             $files           = $_FILES['review_images'] ?? null;
@@ -381,7 +374,6 @@ class Rest extends \WP_REST_Controller {
                 $file_tmp    = (array) ( $files['tmp_name'] ?? array() );
                 $file_errors = array_map( 'intval', (array) ( $files['error'] ?? array() ) );
                 $file_sizes  = array_map( 'intval', (array) ( $files['size'] ?? array() ) );
-                $file_names  = array_slice( $file_names, 0, 5 );
 
                 foreach ( $file_names as $index => $name ) {
                     $tmp   = $file_tmp[ $index ] ?? '';
@@ -400,22 +392,7 @@ class Rest extends \WP_REST_Controller {
                         'error'    => $error,
                         'size'     => $size,
                     );
-                    if ( $size > 2 * MB_IN_BYTES ) {
-                        continue;
-                    }
-
-                    $upload = wp_handle_upload(
-                        $file,
-                        array(
-							'test_form' => false,
-							'mimes'     => array(
-								'jpg|jpeg' => 'image/jpeg',
-								'png'      => 'image/png',
-								'gif'      => 'image/gif',
-								'webp'     => 'image/webp',
-							),
-                        )
-                    );
+                    $upload = wp_handle_upload( $file, array( 'test_form' => false ) );
 
                     if ( ! empty( $upload['error'] ) || empty( $upload['url'] ) ) {
                         continue;

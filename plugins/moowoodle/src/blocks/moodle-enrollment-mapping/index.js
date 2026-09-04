@@ -6,6 +6,7 @@ import {
 	Notice,
 	Disabled,
 	ToggleControl,
+	ComboboxControl
 } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
@@ -132,27 +133,23 @@ const ProductTab = () => {
 						<label htmlFor="linked_item">
 							{__('Select Item', 'moowoodle')}
 						</label>
-
-						<SelectControl
-							value={linkedItemId}
-							options={[
-								{
-									label: __('Select an item...', 'moowoodle'),
-									value: '',
-								},
-								...options,
-							]}
-							onChange={(value) => {
-								setLinkedItemId(value);
-							}}
-						/>
+						<div className="select-item">
+							<ComboboxControl
+								value={linkedItemId}
+								options={options}
+								onChange={(value) => {
+									setLinkedItemId(value || '');
+								}}
+								placeholder={__('Search or select an item...', 'moowoodle')}
+							/>
+						</div>
 					</p>
 				)}
 
 				<Disabled isDisabled={!moowoodleProduct.khali_dabba}>
 					<>
 						{/* Expiry Days */}
-						<p className="form-field">
+						<p className="form-field input">
 							<label htmlFor="course_expiry_days">
 								{__('Expire Access After (Days)', 'moowoodle')}
 							</label>
@@ -169,7 +166,7 @@ const ProductTab = () => {
 						</p>
 
 						{/* Expiry Type */}
-						<p className="form-field">
+						<p className="form-field select">
 							<label htmlFor="course_expiry_type">
 								{__('On Course Expiration', 'moowoodle')}
 							</label>
@@ -196,26 +193,26 @@ const ProductTab = () => {
 
 						{/* Enrollment Extension */}
 						<div className="enrollment-extension">
-							<ToggleControl
-								label={__(
-									'Enable Enrollment Extension',
-									'moowoodle'
-								)}
-								checked={enableEnrollmentExtension}
-								onChange={(value) => {
-									setEnableEnrollmentExtension(value);
+							<p className="form-field">
+								<label htmlFor="course_expiry_type">
+									{__('Enable Enrollment Extension', 'moowoodle')}
+								</label>
+								<ToggleControl
+									checked={enableEnrollmentExtension}
+									onChange={(value) => {
+										setEnableEnrollmentExtension(value);
 
-									if (!value) {
-										setExtensionDays('');
-										setExtensionCost('');
-									}
-								}}
-							/>
-
+										if (!value) {
+											setExtensionDays('');
+											setExtensionCost('');
+										}
+									}}
+								/>
+							</p>
 							{enableEnrollmentExtension && (
 								<>
 									{/* Extension Days */}
-									<p className="form-field">
+									<p className="form-field input">
 										<label htmlFor="enrollment_extension_days">
 											{__(
 												'Extension Days',
@@ -237,7 +234,7 @@ const ProductTab = () => {
 									</p>
 
 									{/* Extension Cost */}
-									<p className="form-field">
+									<p className="form-field input">
 										<label htmlFor="enrollment_extension_cost">
 											{__(
 												'Extension Cost',

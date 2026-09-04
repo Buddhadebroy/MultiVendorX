@@ -10,8 +10,11 @@
 		label{
 			width: 15%;
 		}
-		input{
-			width: 30%;
+		&.input input{
+			width: 55%;
+		}
+		.select-item{
+			width: 55%;
 		}
 	}
 

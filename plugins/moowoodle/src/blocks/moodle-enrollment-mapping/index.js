@@ -293,55 +293,15 @@ const ProductTab = () => {
 				</Notice>
 			</div>
 
-			{/* Existing fields */}
-			<input
-				type="hidden"
-				name="link_type"
-				value={linkType}
-			/>
+			<input type="hidden" name="link_type" value={linkType} />
+			<input type="hidden" name="linked_item_id" value={linkedItemId} />
+			<input type="hidden" name="course_expiry_days" value={expiryDays} />
+			<input type="hidden" name="course_expiry_type" value={expiryType} />
+			<input type="hidden" name="enable_enrollment_extension" value={enableEnrollmentExtension ? 'yes' : 'no'} />
+			<input type="hidden" name="enrollment_extension_days" value={extensionDays} />
+			<input type="hidden" name="enrollment_extension_cost" value={extensionCost} />
+			<input type="hidden" name="product_meta_nonce" value={moowoodleProduct.productMetaNonce} />
 
-			<input
-				type="hidden"
-				name="linked_item_id"
-				value={linkedItemId}
-			/>
-
-			<input
-				type="hidden"
-				name="course_expiry_days"
-				value={expiryDays}
-			/>
-
-			<input
-				type="hidden"
-				name="course_expiry_type"
-				value={expiryType}
-			/>
-
-			{/* Enrollment Extension fields */}
-			<input
-				type="hidden"
-				name="enable_enrollment_extension"
-				value={enableEnrollmentExtension ? 'yes' : 'no'}
-			/>
-
-			<input
-				type="hidden"
-				name="enrollment_extension_days"
-				value={extensionDays}
-			/>
-
-			<input
-				type="hidden"
-				name="enrollment_extension_cost"
-				value={extensionCost}
-			/>
-
-			<input
-				type="hidden"
-				name="product_meta_nonce"
-				value={moowoodleProduct.productMetaNonce}
-			/>
 		</>
 	);
 };

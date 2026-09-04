@@ -57,7 +57,7 @@ const DistanceByZoneShipping: React.FC<DistanceByZoneShippingProps> = ({
 	const [editingMethod, setEditingMethod] = useState<ShippingMethod | null>(
 		null
 	);
-
+	const [isLoadingShipping, setIsLoadingShipping] = useState(false);
 	const [formData, setFormData] = useState<FormData>({
 		shippingMethod: '',
 		localPickupCost: '',
@@ -114,7 +114,7 @@ const DistanceByZoneShipping: React.FC<DistanceByZoneShippingProps> = ({
 		});
 
 		setSelectedZone(zoneWithMethod || null);
-		setAddShipping(true);
+		setIsLoadingShipping(true);
 
 		if (!zoneWithMethod) {
 			return;
@@ -158,13 +158,27 @@ const DistanceByZoneShipping: React.FC<DistanceByZoneShippingProps> = ({
 				}
 
 				setFormData(form);
+				setAddShipping(true);
 			}
 		} catch (err) {
 			console.error('Error loading shipping method:', err);
 			alert('Error loading shipping method');
+		} finally {
+			setIsLoadingShipping(false);
 		}
 	};
+	const handleClosePopup = () => {
+		setAddShipping(false);
 
+		setFormData({
+			shippingMethod: '',
+			localPickupCost: '',
+			freeShippingType: '',
+			minOrderCost: '',
+			flatRateCost: '',
+			flatRateClassCost: '',
+		});
+	};
 	const handleDelete = async (method: ShippingMethod, zone: Zone) => {
 		if (!confirm(`Are you sure you want to delete "${method.title}"?`)) {
 			return;
@@ -384,23 +398,12 @@ const DistanceByZoneShipping: React.FC<DistanceByZoneShippingProps> = ({
 					open={addShipping}
 					width='80%'
 					height="90%"
-					onClose={() => {
-						setAddShipping(false);
-						setFormData({
-							shippingMethod: '',
-							localPickupCost: '',
-							freeShippingType: '',
-							minOrderCost: '',
-							flatRateCost: '',
-							flatRateClassCost: '',
-						});
-
-					}}
+					onClose={handleClosePopup}
 					header={{
 						icon: 'shipping',
 						title: `${isEditing
-								? __('Edit Shipping', 'multivendorx')
-								: __('Add Shipping', 'multivendorx')
+							? __('Edit Shipping', 'multivendorx')
+							: __('Add Shipping', 'multivendorx')
 							} - ${selectedZone.zone_name}`,
 					}}
 					footer={

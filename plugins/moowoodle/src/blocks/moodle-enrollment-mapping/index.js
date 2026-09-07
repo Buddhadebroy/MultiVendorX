@@ -12,6 +12,12 @@ import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import './tab.scss';
 
+const ProTag = ({ isProVersion }) => {
+	return !isProVersion ? (
+		<span className="pro-tag">{__('Pro', 'moowoodle')}</span>
+	) : null;
+};
+
 const ProductTab = () => {
 	const [linkType, setLinkType] = useState(
 		moowoodleProduct.linkType || ''
@@ -84,7 +90,7 @@ const ProductTab = () => {
 	return (
 		<>
 			<div className="options_group">
-				<div className="form-field">
+				<div className="form-field components-radio">
 					<label htmlFor="linked_item">
 						{__('Link Type', 'moowoodle')}
 					</label>
@@ -104,13 +110,12 @@ const ProductTab = () => {
 					/>
 
 					<Disabled isDisabled={!moowoodleProduct.khali_dabba}>
+						<ProTag isProVersion={moowoodleProduct.khali_dabba} />
 						<RadioControl
 							selected={linkType}
 							options={[
 								{
-									label: moowoodleProduct.khali_dabba
-										? __('Cohort', 'moowoodle')
-										: __('Cohort Pro', 'moowoodle'),
+									label: __('Cohort', 'moowoodle'),
 									value: 'cohort',
 								},
 							]}
@@ -163,6 +168,7 @@ const ProductTab = () => {
 									setExpiryDays(event.target.value)
 								}
 							/>
+							<ProTag isProVersion={moowoodleProduct.khali_dabba} />
 						</p>
 
 						{/* Expiry Type */}
@@ -189,6 +195,7 @@ const ProductTab = () => {
 								]}
 								onChange={setExpiryType}
 							/>
+							<ProTag isProVersion={moowoodleProduct.khali_dabba} />
 						</p>
 
 						{/* Enrollment Extension */}
@@ -208,6 +215,7 @@ const ProductTab = () => {
 										}
 									}}
 								/>
+								<ProTag isProVersion={moowoodleProduct.khali_dabba} />
 							</p>
 							{enableEnrollmentExtension && (
 								<>

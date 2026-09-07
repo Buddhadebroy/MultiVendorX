@@ -14,12 +14,6 @@ import './tab.scss';
 import { SlotFillProvider, Slot, Fill } from '@wordpress/components';
 import { applyFilters } from '@wordpress/hooks';
 
-const ProTag = ({ isProVersion }) => {
-	return !isProVersion ? (
-		<span className="pro-tag">{__('Pro', 'moowoodle')}</span>
-	) : null;
-};
-
 const ProductTab = () => {
 	const [linkType, setLinkType] = useState(
 		moowoodleProduct.linkType || ''
@@ -93,7 +87,9 @@ const ProductTab = () => {
 						/>
 
 						<Disabled isDisabled={!moowoodleProduct.khali_dabba}>
-							<ProTag isProVersion={moowoodleProduct.khali_dabba} />
+							{!moowoodleProduct.khali_dabba && (
+								<span className="pro-tag">{__('Pro', 'moowoodle')}</span>
+							)}
 							<RadioControl
 								selected={linkType}
 								options={[

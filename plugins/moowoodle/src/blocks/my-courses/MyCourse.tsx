@@ -239,7 +239,7 @@ const MyCourse: React.FC = () => {
 								className="woocommerce-button wp-element-button moowoodle"
 								onClick={() =>
 									window.open(
-										course.status === 'expired'
+										course.status === 'expired' || course.status === 'unenrolled'
 											? course.product_url
 											: course.moodle_url,
 										'_blank',
@@ -250,7 +250,7 @@ const MyCourse: React.FC = () => {
 								tabIndex={0}
 							>
 								{__(
-									course.status === 'expired'
+									course.status === 'expired' || course.status === 'unenrolled'
 										? 'Renew'
 										: 'Open Course',
 									'moowoodle'

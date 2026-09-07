@@ -9,7 +9,7 @@
  * Requires at least: 6.4.0
  * Tested up to: 7.1.0
  * WC requires at least: 8.2.0
- * WC tested up to: 11.0.1
+ * WC tested up to: 11.1.0
  *
  * Text Domain: multivendorx
  * Requires Plugins: woocommerce
